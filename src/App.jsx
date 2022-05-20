@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 
 import { BsSun, BsMoonStarsFill, BsTrashFill } from "react-icons/bs";
+import Task from "./Components/Task";
 
 const generateId = () => {
   let id = 0;
@@ -53,12 +54,12 @@ const App = () => {
               type="email"
               placeholder="Ingrese su tarea"
               onKeyDown={(e) => {
-                console.log(e.key);
                 if (e.key == "Enter") {
                   setTasks([
                     ...tasks,
                     { title: e.target.value, hasCompleted: false, id: getId() },
                   ]);
+                  e.target.value = "";
                 }
               }}
             />
@@ -70,6 +71,11 @@ const App = () => {
           boxShadow={"lg"}
           p={5}
         >
+          <ButtonGroup variant="outline" spacing="6" mb="5">
+            <Button onClick={() => setFilter(0)}>Todos</Button>
+            <Button onClick={() => setFilter(1)}>Completos</Button>
+            <Button onClick={() => setFilter(2)}>Incompletos</Button>
+          </ButtonGroup>
           <Stack spacing={4}>
             {tasks
               .filter((task) => {
@@ -83,46 +89,13 @@ const App = () => {
                 return false;
               })
               .map((task) => (
-                <>
-                  <Flex justify="space-between" key={`list${task.id}`}>
-                    {/* <Text></Text> */}
-                    <Checkbox
-                      defaultChecked={task.hasCompleted}
-                      onChange={() => {
-                        setTasks(
-                          tasks.map((taskFl) => {
-                            if (taskFl.id === task.id) {
-                              return {
-                                ...taskFl,
-                                hasCompleted: !taskFl.hasCompleted,
-                              };
-                            }
-                            return taskFl;
-                          })
-                        );
-                      }}
-                    >
-                      <Text as={task.hasCompleted ? "s" : "span"}>
-                        {task.title}
-                      </Text>
-                    </Checkbox>
-                    <IconButton
-                      onClick={() => {
-                        setTasks(
-                          tasks.filter((taskFl) => task.id === taskFl.id)
-                        );
-                      }}
-                      icon={<BsTrashFill></BsTrashFill>}
-                    ></IconButton>
-                  </Flex>
-                  <Divider />
-                </>
+                <Task
+                  task={task}
+                  setTasks={setTasks}
+                  tasks={tasks}
+                  key={`task-${task.id}`}
+                ></Task>
               ))}
-            <ButtonGroup variant="outline" spacing="6">
-              <Button onClick={() => setFilter(0)}>Todos</Button>
-              <Button onClick={() => setFilter(1)}>Completos</Button>
-              <Button onClick={() => setFilter(2)}>Incompletos</Button>
-            </ButtonGroup>
           </Stack>
         </Box>
       </Stack>
